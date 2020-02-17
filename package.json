@@ -1,0 +1,21 @@
+{
+  "name": "tinyapp",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node express_server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/maridoh13/tinyapp.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/maridoh13/tinyapp/issues"
+  },
+  "homepage": "https://github.com/maridoh13/tinyapp#readme"
+}
