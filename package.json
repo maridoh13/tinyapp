@@ -17,5 +17,8 @@
   "bugs": {
     "url": "https://github.com/maridoh13/tinyapp/issues"
   },
-  "homepage": "https://github.com/maridoh13/tinyapp#readme"
+  "homepage": "https://github.com/maridoh13/tinyapp#readme",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
 }
