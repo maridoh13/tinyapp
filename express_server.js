@@ -60,7 +60,7 @@ app.post("/urls", (req, res) => {
   let shortURL = generateRandomString();
   urlDatabase[shortURL] = longURL;
   res.redirect(`/urls/${shortURL}`);
-});
+}); 
 
 // New tiny link created
 app.get("/urls/:shortURL", (req, res) => {
