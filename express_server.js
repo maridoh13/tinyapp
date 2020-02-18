@@ -46,7 +46,6 @@ app.get("/hello", (req, res) => {
 app.get("/urls", (req, res) => {
   let templateVars = { urls: urlDatabase };
   res.render("urls_index", templateVars);
-  console.log('in the URLs');
 });
 
 app.get("/urls/new", (req, res) => {
