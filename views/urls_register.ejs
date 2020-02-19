@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+  <title>TinyApp</title>
+</head>
+
+<header>
+  <nav class="navbar navbar-expand-md navbar-dark bg-success">
+    <a class="navbar-brand" href="/urls">TinyApp</a>
+  </nav>
+</header>
+
+<body>
+  <h2 style="margin: 1em">Register to use: </h2>
+  <form style="margin: 1em" action="/register" method="POST">
+    <p>Username:<input type="email" name="email" placeholder="email"></p>
+    <p>Password:<input type="password" name="password" placeholder="password"></p>
+    <p><button type="submit" class="btn btn-primary">Submit</button></p>
+  </form>
+</body>

@@ -13,6 +13,19 @@ const urlDatabase = {
   "9sm5xK": "http://www.google.com"
 };
 
+const users = { 
+  "userRandomID": {
+    id: "userRandomID", 
+    email: "user@example.com", 
+    password: "purple-monkey-dinosaur"
+  },
+ "user2RandomID": {
+    id: "user2RandomID", 
+    email: "user2@example.com", 
+    password: "dishwasher-funk"
+  }
+};
+
 function generateRandomString() {
   let result           = '';
   let characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -95,8 +108,6 @@ app.post("/urls/:shortURL/edit", (req, res) => {
 // Login
 app.post("/login", (req, res) => {
   res.cookie('username', req.body.username);
-  // let templateVars = { username: req.cookies["username"]  };
-  // res.render("urls_index", templateVars);
   res.redirect("/urls");
 })
 
@@ -105,3 +116,19 @@ app.post("/logout", (req, res) => {
   res.clearCookie('username');
   res.redirect("/urls");
 })
+
+
+// Registration pages
+app.get("/register", (req, res) => {
+  res.render("urls_register");
+})
+
+app.post("/register", (req, res) => {
+  let newID = generateRandomString();
+  let newUser = {id: newID, email: req.body.email, password: req.body.password};
+  users[newID] = newUser;
+  res.cookie('user_id', newID);
+  res.redirect("/urls")
+})
+
+
