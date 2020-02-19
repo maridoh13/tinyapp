@@ -3,7 +3,7 @@ const app = express();
 const PORT = 8080; // default port 8080
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
-app.use(bodyParser.urlencoded({extended: true}));
+app.use(bodyParser.urlencoded({ extended: true }));
 app.set("view engine", "ejs");
 app.use(cookieParser());
 
@@ -13,24 +13,34 @@ const urlDatabase = {
   "9sm5xK": "http://www.google.com"
 };
 
-const users = { 
+let users = {
   "userRandomID": {
-    id: "userRandomID", 
-    email: "user@example.com", 
+    id: "userRandomID",
+    email: "user@example.com",
     password: "purple-monkey-dinosaur"
   },
- "user2RandomID": {
-    id: "user2RandomID", 
-    email: "user2@example.com", 
+  "user2RandomID": {
+    id: "user2RandomID",
+    email: "user2@example.com",
     password: "dishwasher-funk"
   }
 };
 
+const emailLookup = (data, users) => {
+  for (el in users) {
+    if (users[el]["email"] === data) {
+      return true;
+    }
+  }
+  return false;
+};
+
+
 function generateRandomString() {
-  let result           = '';
-  let characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  let result = '';
+  let characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
   let charactersLength = characters.length;
-  for ( let i = 0; i < 6; i++ ) {
+  for (let i = 0; i < 6; i++) {
     result += characters.charAt(Math.floor(Math.random() * charactersLength));
   }
   return result;
@@ -51,7 +61,7 @@ app.get("/", (req, res) => {
 
 // Hello test page
 app.get("/hello", (req, res) => {
-  let templateVars = { greeting: 'Hello World!', username: req.cookies["username"] };
+  let templateVars = { greeting: 'Hello World!', username: req.cookies["user_id"] };
   res.render("hello_world", templateVars);
 });
 
@@ -61,13 +71,13 @@ app.get("/urls.json", (req, res) => {
 
 // Main page
 app.get("/urls", (req, res) => {
-  let templateVars = { urls: urlDatabase, username: req.cookies["username"] };
+  let templateVars = { urls: urlDatabase, username: req.cookies["user_id"] };
   res.render("urls_index", templateVars);
 });
 
 // Form to create tiny link
 app.get("/urls/new", (req, res) => {
-  let templateVars = { username: req.cookies["username"] };
+  let templateVars = { username: req.cookies["user_id"] };
   res.render("urls_new", templateVars);
 });
 
@@ -77,11 +87,11 @@ app.post("/urls", (req, res) => {
   let shortURL = generateRandomString();
   urlDatabase[shortURL] = longURL;
   res.redirect(`/urls/${shortURL}`);
-}); 
+});
 
 // New tiny link created
 app.get("/urls/:shortURL", (req, res) => {
-  let templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL], username: req.cookies["username"] }
+  let templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL], username: req.cookies["user_id"] }
   res.render("urls_show", templateVars);
 });
 
@@ -117,7 +127,6 @@ app.post("/logout", (req, res) => {
   res.redirect("/urls");
 })
 
-
 // Registration pages
 app.get("/register", (req, res) => {
   res.render("urls_register");
@@ -125,10 +134,25 @@ app.get("/register", (req, res) => {
 
 app.post("/register", (req, res) => {
   let newID = generateRandomString();
-  let newUser = {id: newID, email: req.body.email, password: req.body.password};
-  users[newID] = newUser;
-  res.cookie('user_id', newID);
-  res.redirect("/urls")
+  let newUser = { id: newID, email: req.body.email, password: req.body.password };
+  if (req.body.email === '' || req.body.password === '') {
+    res.status(400);
+    res.send('Missing information. Try again.')
+  } else if (emailLookup(req.body.email, users)) {
+    console.log('inside emaillookup')
+    res.status(400);
+    res.send('E-mail already registered. Try again.')
+  } else {
+    users[newID] = newUser;
+    res.cookie('user_id', newID);
+    // let templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL], username: req.cookies["user_id"] }
+    // res.render("urls_index", templateVars);
+
+    res.redirect("/registered")
+  }
 })
 
+app.get("/registered", (req, res) => {
+  res.send(users);
+})
 
