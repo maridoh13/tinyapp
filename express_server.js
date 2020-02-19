@@ -80,3 +80,10 @@ app.post("/urls/:shortURL/delete", (req, res) => {
   delete urlDatabase[key];
   res.redirect("/urls");
 })
+
+// Update a longURL resource
+app.post("/urls/:shortURL/edit", (req, res) => {
+  let key = req.params.shortURL;
+  urlDatabase[key] = req.body.newlongURL;
+  res.redirect(`/urls/${key}`);
+})
