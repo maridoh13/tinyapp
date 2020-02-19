@@ -36,6 +36,7 @@ app.get("/", (req, res) => {
 //   res.send("<html><body>Hello <b>World</b></body></html>\n");
 // });
 
+// Hello test page
 app.get("/hello", (req, res) => {
   let templateVars = { greeting: 'Hello World!', username: req.cookies["username"] };
   res.render("hello_world", templateVars);
