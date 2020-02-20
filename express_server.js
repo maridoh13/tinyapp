@@ -56,7 +56,7 @@ const isPasswordCorrect = (data, users) => {
 };
 
 const getEmailByUserID = (userID) => {
-  return users[userID].email;
+  return users[userID]['email'];
 };
 
 const getUserByEmail = (email, users) => {
@@ -127,10 +127,10 @@ app.get("/urls", (req, res) => {
 
 // Form to create tiny link
 app.get("/urls/new", (req, res) => {
-  let userID = req.cookies["user_id"];
-  let userEmail = getEmailByUserID(userID);
-  let templateVars = { urls: urlDatabase, email: userEmail };
   if (req.cookies['user_id']) {
+    let userID = req.cookies["user_id"];
+    let userEmail = getEmailByUserID(userID);
+    let templateVars = { urls: urlDatabase, email: userEmail };
     res.render("urls_new", templateVars);
   } else {
     res.redirect("/urls");
@@ -150,7 +150,8 @@ app.post("/urls", (req, res) => {
 app.get("/urls/:shortURL", (req, res) => {
   let userID = req.cookies["user_id"];
   let userEmail = getEmailByUserID(userID);
-  let templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[userID]['longURL'], email: userEmail };
+  let shortURL = req.params.shortURL
+  let templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[shortURL]['longURL'], email: userEmail };
   res.render("urls_show", templateVars);
 });
 
@@ -167,11 +168,13 @@ app.post("/urls/:shortURL/delete", (req, res) => {
   res.redirect("/urls");
 });
 
-// Update a longURL resource
+// Update a longURL resource - EDIT longURL
 app.post("/urls/:shortURL/edit", (req, res) => {
-  let key = req.params.shortURL;
-  urlDatabase[key] = req.body.newlongURL;
-  res.redirect(`/urls/${key}`);
+  let userID = req.cookies["user_id"];
+  let userEmail = getEmailByUserID(userID);
+  let shortURL = req.params.shortURL;
+  urlDatabase[shortURL]['longURL'] = req.body.newlongURL;
+  res.redirect(`/urls/${shortURL}`);
 });
 
 // Login
