@@ -30,7 +30,7 @@
         <% for(let url in urls) { %>
         <tr>
           <td><%= url %></td>
-          <td><%= urls[url] %></td>
+          <td><%= urls[url]['longURL'] %></td>
           <td>
             <button class="btn btn-outline-warning" onclick="window.location.href = '/urls/<%= url %>'">Edit</button>
           </td>
