@@ -74,17 +74,17 @@ const generateRandomString = () => {
 }
 
 const urlsForUser = (id) => {
-  let urlsOfUser = [];
+  let urlsOfUser = {};
   for (let shortURL in urlDatabase) {
     if (urlDatabase[shortURL]['userID'] === id) {
-      urlsOfUser.push(shortURL);
+      urlsOfUser[shortURL] = urlDatabase[shortURL];
     }
   }
   return urlsOfUser;
 }
 
 app.listen(PORT, () => {
-  console.log(`Example app listening on port ${PORT}!`);
+  console.log(`Tiny App listening on port ${PORT}!`);
 });
 
 // Root page
@@ -99,16 +99,11 @@ app.get("/urls.json", (req, res) => {
 
 // Main page
 app.get("/urls", (req, res) => {
-  // let arr = urlsForUser('maridoh')
-  // let specificUserDB = {};
-  // for (let el in urlsForUser) {
-  //   specificUserDB.el = { el };
-  // }
-
   if (req.cookies["user_id"]) {
     let userID = req.cookies["user_id"];
     let userEmail = getEmailByUserID(userID);
-    let templateVars = { urls: urlDatabase, email: userEmail };
+    let urlsOfUser = urlsForUser(userID);
+    let templateVars = { urls: urlsOfUser, email: userEmail };
     res.render("urls_index", templateVars);
   } else {
     let templateVars = { urls: urlDatabase, email: undefined };
@@ -124,7 +119,7 @@ app.get("/urls/new", (req, res) => {
     let templateVars = { urls: urlDatabase, email: userEmail };
     res.render("urls_new", templateVars);
   } else {
-    res.redirect("/urls");
+    res.redirect("/login");
   }
 });
 
@@ -139,24 +134,32 @@ app.post("/urls", (req, res) => {
 
 // New tiny link created
 app.get("/urls/:shortURL", (req, res) => {
-  let userID = req.cookies["user_id"];
-  let userEmail = getEmailByUserID(userID);
-  let shortURL = req.params.shortURL
-  let templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[shortURL]['longURL'], email: userEmail };
-  res.render("urls_show", templateVars);
+  if (!req.cookies['user_id']) {
+    res.redirect("/login");
+  } else {
+    let userID = req.cookies["user_id"];
+    let userEmail = getEmailByUserID(userID);
+    let shortURL = req.params.shortURL
+    let templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[shortURL]['longURL'], email: userEmail };
+    res.render("urls_show", templateVars);
+  }
 });
 
-// Forwarder page
+// Forwarder page ------- NEEDS FIXINGs
 app.get("/u/:shortURL", (req, res) => {
-  const longURL = urlDatabase[req.params.shortURL];
+  const longURL = urlDatabase[req.params.shortURL]['longURL'];
   res.redirect(longURL);
 });
 
 // Delete url entry
 app.post("/urls/:shortURL/delete", (req, res) => {
+  if (req.cookies['user_id']) {
   let key = req.params.shortURL;
   delete urlDatabase[key];
   res.redirect("/urls");
+  } else {
+    res.redirect("/login");
+  }
 });
 
 // Update a longURL resource - EDIT longURL
