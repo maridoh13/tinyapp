@@ -8,11 +8,6 @@ app.set("view engine", "ejs");
 app.use(cookieParser());
 
 
-// const urlDatabase = {
-//   "b2xVn2": "http://www.lighthouselabs.ca",
-//   "9sm5xK": "http://www.google.com"
-// };
-
 const urlDatabase = {
   b6UTxQ: { longURL: "https://www.tsn.ca", userID: "aJ48lW" },
   i3BoGr: { longURL: "https://www.google.ca", userID: "aJ48lW" },
@@ -81,9 +76,8 @@ const generateRandomString = () => {
 const urlsForUser = (id) => {
   let urlsOfUser = [];
   for (let shortURL in urlDatabase) {
-
     if (urlDatabase[shortURL]['userID'] === id) {
-      urlsOfUser.push(urlDatabase[shortURL]);
+      urlsOfUser.push(shortURL);
     }
   }
   return urlsOfUser;
@@ -98,22 +92,19 @@ app.get("/", (req, res) => {
   res.send("Howdy do! Please go to /urls");
 });
 
-// app.get("/hello", (req, res) => {
-//   res.send("<html><body>Hello <b>World</b></body></html>\n");
-// });
-
-// Hello test page
-app.get("/hello", (req, res) => {
-  let templateVars = { greeting: 'Hello World!', user_id: req.cookies["user_id"] };
-  res.render("hello_world", templateVars);
-});
-
 app.get("/urls.json", (req, res) => {
-  res.json(urlDatabase);
+  // res.json(urlDatabase);
+  res.send(urlsForUser('maridoh'))
 });
 
 // Main page
 app.get("/urls", (req, res) => {
+  // let arr = urlsForUser('maridoh')
+  // let specificUserDB = {};
+  // for (let el in urlsForUser) {
+  //   specificUserDB.el = { el };
+  // }
+
   if (req.cookies["user_id"]) {
     let userID = req.cookies["user_id"];
     let userEmail = getEmailByUserID(userID);
