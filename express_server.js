@@ -41,7 +41,7 @@ let users = {
   "maridoh": {
     id: "maridoh",
     email: "eu@gmail",
-    password: "123"
+    password: "$2b$10$TsAGOkx0C4t5KZfoNetWu.2z8M5K4T308boDWxHg4MAzVV7KSc8Qy"
   }
 };
 
@@ -61,8 +61,8 @@ app.listen(PORT, () => {
   console.log(`Tiny App listening on port ${PORT}!`);
 });
 
-app.get("/urls.json", (req, res) => {
-  // res.json(urlDatabase);
+app.get("/", (req, res) => {
+  res.redirect("/login");
 });
 
 // Landing page
@@ -113,10 +113,14 @@ app.get("/urls/:shortURL", (req, res) => {
   }
 });
 
-// Forwarder page ------- NEEDS FIXING
+// Forwarder page
 app.get("/u/:shortURL", (req, res) => {
-  const longURL = urlDatabase[req.params.shortURL]['longURL'];
-  res.redirect(longURL);
+    if (!urlDatabase[req.params.shortURL]) {
+    res.send("TinyLink does not exist.");
+  } else {
+    const longURL = urlDatabase[req.params.shortURL]['longURL'];
+    res.redirect(longURL);
+  }
 });
 
 // Delete url entry
