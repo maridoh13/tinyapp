@@ -27,16 +27,6 @@ const urlDatabase = {
 };
 
 let users = {
-  "userRandomID": {
-    id: "userRandomID",
-    email: "user@example.com",
-    password: "purple-monkey-dinosaur"
-  },
-  "user2RandomID": {
-    id: "user2RandomID",
-    email: "user2@example.com",
-    password: "dishwasher-funk"
-  },
   "maridoh": {
     id: "maridoh",
     email: "eu@gmail",
@@ -101,6 +91,15 @@ app.post("/urls", (req, res) => {
 
 // New tiny link created
 app.get("/urls/:shortURL", (req, res) => {
+  if (!urlDatabase[req.params.shortURL] && req.session.user_id) {
+    res.send('This tiny url is not yours!')
+  }
+  
+  if (!urlDatabase[req.params.shortURL]) {
+    res.send('Tiny url does not exist.')
+  }
+  
+
   if (!req.session.user_id) {
     res.redirect("/login");
   } else {
