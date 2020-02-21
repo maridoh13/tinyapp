@@ -83,7 +83,7 @@ app.get("/urls/new", (req, res) => {
 // Creates tiny link
 app.post("/urls", (req, res) => {
   if (!req.session.user_id) {
-    res.send('User not logged in. Cannot create new link.');
+    res.send('User not logged in. Cannot create new URL.');
   } else {
     let longURL = req.body.longURL;
     let shortURL = generateRandomString();
@@ -98,11 +98,11 @@ app.get("/urls/:shortURL", (req, res) => {
   if (!urlDatabase[req.params.shortURL] && req.session.user_id) {
     res.send('This tiny url is not yours!');
   }
-  
+
   if (!urlDatabase[req.params.shortURL]) {
     res.send('Tiny url does not exist.');
   }
-  
+
   if (!req.session.user_id) {
     res.redirect("/login");
   } else {
