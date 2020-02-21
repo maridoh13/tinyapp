@@ -5,10 +5,9 @@ const bodyParser = require('body-parser');
 const cookieSession = require('cookie-session')
 const bcrypt = require('bcrypt');
 
-const helpers = require('./helpers');
-const getEmailByUserID = helpers.getEmailByUserID;
-const getUserByEmail = helpers.getUserByEmail;
-const generateRandomString = helpers.generateRandomString;
+const { getEmailByUserID } = require('./helpers');
+const { generateRandomString } = require('./helpers');
+const { getUserByEmail } = require('./helpers');
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.set("view engine", "ejs");
@@ -150,10 +149,12 @@ app.get("/login", (req, res) => {
 
 app.post("/login", (req, res) => {
   let userID = getUserByEmail(req.body.email, users);
-
-  if (!getUserByEmail(req.body.email, users)) {
+  if (req.body.email === "" || req.body.password === "") {
     res.statusCode = 403;
-    res.send('E-mail not found');
+    res.send('Please enter all fields.');
+  } else if (!getUserByEmail(req.body.email, users)) {
+    res.statusCode = 403;
+    res.send('E-mail not found!');
   } else if (getUserByEmail(req.body.email, users) && (!bcrypt.compareSync(req.body.password, users[userID]['password']))) {
     res.statusCode = 403;
     res.send('Incorrect password.');
@@ -179,11 +180,12 @@ app.post("/register", (req, res) => {
   let password = req.body.password;
   let hashedPassword = bcrypt.hashSync(password, 10);
   let newUser = { id: newID, email: req.body.email, password: hashedPassword };
+  let reqEmail = req.body.email
 
   if (req.body.email === '' || req.body.password === '') {
     res.status(400);
-    res.send('Missing information. Try again.');
-  } else if (getUserByEmail(req.body.email)) {
+    res.send('Please enter all fields.');
+  } else if (getUserByEmail(reqEmail, users)) {
     res.status(400);
     res.send('E-mail already registered. Try again.');
   } else {
